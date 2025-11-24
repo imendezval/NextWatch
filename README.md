@@ -1,2 +1,2 @@
 # NextWatch
-A Movie Recommender System.
+The Movie Recommendation App.
