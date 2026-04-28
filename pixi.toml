@@ -6,13 +6,15 @@ platforms = ["linux-64", "osx-arm64", "osx-64"]
 version = "0.1.0"
 
 [tasks]
+ingest = "python -m apps.ingest.run"
+ingest-small = "python -m apps.ingest.run --pages 1"
+check-raw-ingest = "python -m scripts.check_raw_ingest"
 lint = "ruff check ."
 format = "ruff format ."
 typecheck = "mypy apps tests"
 test = "pytest tests"
 dvc-init = "dvc init"
 dvc-status = "dvc status"
-ingest = "python apps/ingest/run.py"
 duckdb = "python scripts/duckdb_sanity.py"
 
 [dependencies]
