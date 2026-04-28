@@ -1,4 +1,4 @@
 [core]
-    remote = storage
-['remote "storage"']
-    url = s3://nextwatch-dvc
+    remote = localstorage
+['remote "localstorage"']
+    url = ../../nextwatch-dvc-storage
