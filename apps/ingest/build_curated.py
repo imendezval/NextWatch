@@ -15,6 +15,8 @@ from apps.ingest.normalize import (
     normalize_movie_keywords,
 )
 
+from apps.ingest.schemas import validate_dataframe
+
 console = Console()
 
 
@@ -23,7 +25,7 @@ def read_json(path: Path) -> dict[str, Any]:
         return json.load(f)
 
 
-def write_parquet(rows: list[dict[str, Any]], output_path: Path) -> None:
+def write_parquet(rows: list[dict[str, Any]], output_path: Path, table_name: str) -> None:
     output_path.parent.mkdir(parents=True, exist_ok=True)
 
     df = pd.DataFrame(rows)
@@ -31,6 +33,8 @@ def write_parquet(rows: list[dict[str, Any]], output_path: Path) -> None:
     if df.empty:
         console.print(f"[yellow]Skipping empty table: {output_path}[/yellow]")
         return
+    
+    df = validate_dataframe(df, table_name=table_name)
 
     df.to_parquet(output_path, index=False)
 
@@ -56,11 +60,11 @@ def main() -> None:
         movie_cast.extend(normalize_movie_cast(movie))
         movie_crew.extend(normalize_movie_crew(movie))
 
-    write_parquet(movies, Path("data/curated/movies.parquet"))
-    write_parquet(movie_genres, Path("data/curated/movie_genres.parquet"))
-    write_parquet(movie_keywords, Path("data/curated/movie_keywords.parquet"))
-    write_parquet(movie_cast, Path("data/curated/movie_cast.parquet"))
-    write_parquet(movie_crew, Path("data/curated/movie_crew.parquet"))
+    write_parquet(movies, Path("data/curated/movies.parquet"), "movies")
+    write_parquet(movie_genres, Path("data/curated/movie_genres.parquet"), "movie_genres")
+    write_parquet(movie_keywords, Path("data/curated/movie_keywords.parquet"), "movie_keywords")
+    write_parquet(movie_cast, Path("data/curated/movie_cast.parquet"), "movie_cast")
+    write_parquet(movie_crew, Path("data/curated/movie_crew.parquet"), "movie_crew")
 
     console.print("[green]Curated Parquet tables written to data/curated[/green]")
     console.print(f"movies: {len(movies)}")
